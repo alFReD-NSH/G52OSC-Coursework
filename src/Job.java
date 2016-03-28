@@ -1,10 +1,12 @@
-public class Job {
+public class Job implements Statistics {
     private int duration;
     private int remaining;
     private int waitingTime;
+    private int priority;
 
-    public Job(int duration) {
+    public Job(int duration, int priority) {
         this.duration = duration;
+        this.priority = priority;
         remaining = duration;
     }
 
@@ -39,10 +41,22 @@ public class Job {
         return remaining;
     }
 
-    public int getTurnaroundTime() {
-        if (remaining != 0) {
-            throw new Error("getTurnaroundTime can be only called when job is finished");
+    public double getTurnAroundTime() {
+        if (!isFinished()) {
+            throw new Error("getTurnAroundTime can be only called when job is finished");
         }
         return waitingTime + duration;
+    }
+
+    public double getWaitingTime() {
+        return waitingTime;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public boolean isFinished() {
+        return getRemaining() == 0;
     }
 }
