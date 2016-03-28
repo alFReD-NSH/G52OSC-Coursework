@@ -26,17 +26,34 @@ public class JobManager implements Statistics {
     /**
      * @return the average waiting time of the jobs
      */
+    @Override
     public double getWaitingTime() {
         return jobs.stream().mapToDouble(job -> job.getWaitingTime()).sum() / jobs.size();
     }
+
     /**
      * @return the average turn around time of the jobs
      */
+    @Override
     public double getTurnAroundTime() {
         return jobs.stream().mapToDouble(job -> job.getTurnAroundTime()).sum() / jobs.size();
     }
 
+    @Override
     public boolean isFinished() {
         return jobs.stream().allMatch(job -> job.isFinished());
+    }
+
+
+    public double getCurrentCPUUsage() {
+        return 100;
+    }
+
+    /**
+     * @return the average of total cpu usage of each job.
+     */
+    @Override
+    public double getTotalCPUUsage() {
+        return jobs.stream().mapToDouble(job -> job.getTotalCPUUsage()).sum() / jobs.size();
     }
 }

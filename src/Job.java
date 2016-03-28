@@ -4,6 +4,12 @@ public class Job implements Statistics {
     private int waitingTime;
     private int priority;
 
+    // number of ticks job was running in this period
+    private int periodRunning;
+
+    // number of ticks job was waiting in this period
+    private int periodWaiting;
+
     public Job(int duration, int priority) {
         this.duration = duration;
         this.priority = priority;
@@ -20,6 +26,7 @@ public class Job implements Statistics {
             maxTicks = remaining;
         }
         remaining -= maxTicks;
+        periodRunning += maxTicks;
         return maxTicks;
     }
 
@@ -30,7 +37,12 @@ public class Job implements Statistics {
     public void onWait(int ticks) {
         if (remaining != 0) {
             waitingTime += ticks;
+            periodWaiting += ticks;
         }
+    }
+
+    public int getPriority() {
+        return priority;
     }
 
     public int getDuration() {
@@ -41,6 +53,7 @@ public class Job implements Statistics {
         return remaining;
     }
 
+    @Override
     public double getTurnAroundTime() {
         if (!isFinished()) {
             throw new Error("getTurnAroundTime can be only called when job is finished");
@@ -48,15 +61,33 @@ public class Job implements Statistics {
         return waitingTime + duration;
     }
 
+    @Override
     public double getWaitingTime() {
         return waitingTime;
     }
 
-    public int getPriority() {
-        return priority;
-    }
-
+    @Override
     public boolean isFinished() {
         return getRemaining() == 0;
+    }
+
+    /**
+     * Will return the CPU from the last time this method was called.
+     * You can call this function periodically to get the CPU usage between each period.
+     * Calling this method will reset the internal cpu usage counter.
+     * @return the CPU usage
+     */
+    public double collectCPUUsage() {
+        double total = periodWaiting + periodRunning;
+        double result = periodRunning / total * 100;
+        periodRunning = 0;
+        periodWaiting = 0;
+        return result;
+    }
+
+    @Override
+    public double getTotalCPUUsage() {
+        double done = duration - remaining;
+        return done / (waitingTime + done) * 100;
     }
 }
