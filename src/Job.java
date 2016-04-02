@@ -1,8 +1,8 @@
 public class Job implements Statistics {
-    private int duration;
-    private int remaining;
-    private int waitingTime;
-    private int priority;
+    public int duration;
+    public int remaining;
+    public int waitingTime;
+    public int priority;
 
     // number of ticks job was running in this period
     private int periodRunning;
