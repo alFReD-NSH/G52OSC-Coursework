@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="G52OSC:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/G52OSC_jar</output-path>
+    <root id="archive" name="G52OSC.jar">
+      <element id="module-output" name="G52OSC" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/jcommander-1.48.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

@@ -9,5 +9,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="org.testng:testng:6.9.10" level="project" />
+    <orderEntry type="library" name="com.beust:jcommander:1.48" level="project" />
   </component>
 </module>

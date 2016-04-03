@@ -7,6 +7,15 @@ import java.util.List;
 public class JobManager implements Statistics {
     public List<Job> jobs;
 
+    public JobManager generateRandomJobs(int number, int maxDuration, int maxPriority) {
+        for (int i = 0; i < number; i++) {
+            jobs.add(new Job(
+                    (int) (Math.random() * maxDuration),
+                    (int) (Math.random() * maxPriority)));
+        }
+        return this;
+    }
+
     /**
      * Will run a given job with a specified amount of max ticks.
      * @param job
