@@ -2,18 +2,22 @@ import java.util.ArrayList;
 
 public class ExecutionChartCreator implements JobManager.OnJobRunCallback {
     private int width;
-    ArrayList<ChartCreator.Entry> entries = new ArrayList<>();
+    private boolean verbose;
+    ArrayList<GanttChartCreator.Entry> entries = new ArrayList<>();
 
 
-    public ExecutionChartCreator(int width) {
+    public ExecutionChartCreator(int width, boolean verbose) {
         this.width = width;
+        this.verbose = verbose;
     }
 
 
     @Override
     public void call(Job job, int processedTicks, int maxTicks) {
-        String text = "Job " + job.getId() + ", " + processedTicks + " Ticks";
-        entries.add(new ChartCreator.Entry(text, processedTicks));
+        String text = verbose ?
+                "Job " + job.getId() + ", " + processedTicks + " Ticks" :
+                job.getId() + "";
+        entries.add(new GanttChartCreator.Entry(text, processedTicks));
     }
 
     public void reset() {
@@ -21,6 +25,7 @@ public class ExecutionChartCreator implements JobManager.OnJobRunCallback {
     }
 
     public void print() {
-        new ChartCreator(width).print(entries);
+        System.out.println("Job Execution Chart:");
+        new GanttChartCreator(width).print(entries);
     }
 }

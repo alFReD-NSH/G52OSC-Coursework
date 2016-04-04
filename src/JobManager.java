@@ -11,19 +11,20 @@ import java.util.stream.Collectors;
  * make the jobs properly update the statistics.
  */
 public class JobManager extends Statistics {
-    private final static Logger LOGGER = Logger.getLogger(JobManager.class.getName());
+    private final Logger LOGGER = Logger.getAnonymousLogger();
     private List<Job> jobs;
     private OnJobRunCallback onJobRunCallback;
     private V2_AsciiTableRenderer rend;
+    private boolean verbose;
 
-    public JobManager(V2_AsciiTableRenderer rend) {
+    public JobManager(V2_AsciiTableRenderer rend, boolean verbose) {
         this.rend = rend;
+        this.verbose = verbose;
     }
 
     public JobManager() {
 
     }
-
 
     interface OnJobRunCallback {
         void call(Job job, int processedTicks, int maxTicks);
@@ -58,7 +59,7 @@ public class JobManager extends Statistics {
      * @return returns the number of ticks that was processed.
      */
     public int runJob(Job job, int maxTicks) {
-        LOGGER.setLevel(Level.FINER);
+        LOGGER.setLevel(Level.ALL);
         int processed = job.run(maxTicks);
         for (Job j : jobs) {
             if (j != job) {
@@ -68,7 +69,10 @@ public class JobManager extends Statistics {
         if (onJobRunCallback != null) {
             onJobRunCallback.call(job, processed, maxTicks);
         }
-        LOGGER.fine("Job " + job.getId() + " ran for " + processed + " ticks");
+
+        if (verbose) {
+            System.out.println("Job " + job.getId() + " ran for " + processed + " ticks");
+        }
 
         return processed;
     }

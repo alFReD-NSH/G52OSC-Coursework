@@ -9,7 +9,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.ToDoubleFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -41,12 +41,22 @@ public class Main {
             "randomly generated jobs")
     public int maxPriority = 10;
 
-    @Parameter(names = "--quantum", description = "Time quantum for round roubin " +
+    @Parameter(names = "--quantum", description = "Time quantum for round robin " +
             "algorithm")
     public int quantum = 3;
 
+    @Parameter(names = "--verbose", description = "Some verbose logging to see what it " +
+            "does internally")
+    public boolean verbose = false;
+
     @Parameter(names = "--help", help = true)
     private boolean help;
+
+    @Parameter(names = "--verbose-chart", description = "Make the execution chart " +
+            "contain more information.")
+    private boolean verboseChart;
+
+    BarChartCreator barChartCreator;
 
     public static void main(String[] args) {
         Main main = new Main();
@@ -58,7 +68,9 @@ public class Main {
         rend.setTheme(V2_E_TableThemes.UTF_LIGHT.get());
         rend.setWidth(new WidthAbsoluteEven(80));
 
-        JobManager jobManager = new JobManager(rend);
+        barChartCreator = new BarChartCreator(80);
+
+        JobManager jobManager = new JobManager(rend, verbose);
         jobManager.setJobs(jobs);
 
         if (random) {
@@ -70,7 +82,8 @@ public class Main {
             return;
         }
 
-        ExecutionChartCreator executionChartCreator = new ExecutionChartCreator(79);
+        ExecutionChartCreator executionChartCreator =
+                new ExecutionChartCreator(80, verboseChart);
         jobManager.setOnJobRunCallback(executionChartCreator);
 
         FirstComeFirstServed firstComeServe = new FirstComeFirstServed(jobManager);
@@ -95,11 +108,15 @@ public class Main {
 
     private void compareAlgorithms(List<Statistics.Result> results) {
         printAlgorithmTable(results);
-        printChart(JobManager::getWaitingTime, "Waiting time.");
+        printChart(results, result -> result.waitingTime, "Waiting");
+        printChart(results, result -> result.turnAroundTime, "Turnaround");
     }
 
-    private void printChart(ToDoubleFunction<JobManager> mapper, String a) {
-
+    private void printChart(List<Statistics.Result> results,
+                            Function<Statistics.Result,Double> valueMapper, String text) {
+        System.out.println("\n" + text + " time chart:");
+        barChartCreator.print(results.stream().collect(
+                Collectors.toMap(result -> result.name, valueMapper)));
     }
 
     private void printAlgorithmTable(List<Statistics.Result> results) {
