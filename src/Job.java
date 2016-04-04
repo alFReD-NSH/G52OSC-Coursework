@@ -1,8 +1,10 @@
 public class Job implements Statistics {
-    public int duration;
-    public int remaining;
-    public int waitingTime;
-    public int priority;
+    private static int lastId = 0;
+    private int duration;
+    private int remaining;
+    private int waitingTime;
+    private int priority;
+    private int id;
 
     // number of ticks job was running in this period
     private int periodRunning;
@@ -14,6 +16,7 @@ public class Job implements Statistics {
         this.duration = duration;
         this.priority = priority;
         remaining = duration;
+        id = ++lastId;
     }
 
     /**
@@ -32,7 +35,6 @@ public class Job implements Statistics {
 
     /**
      * Must be called when the job was waiting for a certain number of ticks
-     * @return the number of ticks to be processed.
      */
     public void onWait(int ticks) {
         if (remaining != 0) {
@@ -75,7 +77,7 @@ public class Job implements Statistics {
      * Will return the CPU from the last time this method was called.
      * You can call this function periodically to get the CPU usage between each period.
      * Calling this method will reset the internal cpu usage counter.
-     * @return the CPU usage
+     * @return the CPU usage in percentage
      */
     public double collectCPUUsage() {
         double total = periodWaiting + periodRunning;
@@ -89,5 +91,12 @@ public class Job implements Statistics {
     public double getTotalCPUUsage() {
         double done = duration - remaining;
         return done / (waitingTime + done) * 100;
+    }
+
+    /**
+     * Will return the unique id of the job.
+     */
+    public int getId() {
+        return id;
     }
 }

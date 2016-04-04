@@ -38,10 +38,12 @@ public class Main {
 
     private void run() {
         JobManager jobManager = new JobManager();
-        jobManager.jobs = jobs;
+        jobManager.setJobs(jobs);
 
         if (random) {
             jobManager.generateRandomJobs(totalJobs, maxDuration, maxPriority);
         }
+
+//        new FirstComeServe(jobManager).run();
     }
 }

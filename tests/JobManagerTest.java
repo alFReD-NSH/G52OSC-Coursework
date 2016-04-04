@@ -16,7 +16,7 @@ public class JobManagerTest {
         Job job2 = new Job(5, 0);
         jobs.add(job1);
         jobs.add(job2);
-        jobManager.jobs = jobs;
+        jobManager.setJobs(jobs);
 
         jobManager.runJob(job2, 3);
         assertEquals(job1.getRemaining(), 3);

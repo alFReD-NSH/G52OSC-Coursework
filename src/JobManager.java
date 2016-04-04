@@ -1,19 +1,38 @@
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * It will contain a list of jobs and this class is in charge running a job so it will
  * make the jobs properly update the statistics.
  */
 public class JobManager implements Statistics {
-    public List<Job> jobs;
+    private final static Logger LOGGER = Logger.getLogger(JobManager.class.getName());
+    private List<Job> jobs;
+    private OnJobRunCallback onJobRunCallback;
+    interface OnJobRunCallback {
+        void call(Job job, int processedTicks, int maxTicks);
+    }
 
     public JobManager generateRandomJobs(int number, int maxDuration, int maxPriority) {
+        if (jobs == null) {
+            jobs = new ArrayList<>();
+        }
         for (int i = 0; i < number; i++) {
             jobs.add(new Job(
                     (int) (Math.random() * maxDuration),
                     (int) (Math.random() * maxPriority)));
         }
         return this;
+    }
+
+    public List<Job> getJobs() {
+        return jobs;
+    }
+
+    public void setJobs(List<Job> jobs) {
+        this.jobs = jobs;
+        jobs.sort((o1, o2) -> o1.getPriority() - o2.getPriority());
     }
 
     /**
@@ -29,7 +48,15 @@ public class JobManager implements Statistics {
                 j.onWait(processed);
             }
         }
+        if (onJobRunCallback != null) {
+            onJobRunCallback.call(job, processed, maxTicks);
+        }
+
         return processed;
+    }
+
+    public void setOnJobRunCallback(OnJobRunCallback onJobRunCallback) {
+        this.onJobRunCallback = onJobRunCallback;
     }
 
     /**
