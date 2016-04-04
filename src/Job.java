@@ -1,4 +1,4 @@
-public class Job implements Statistics {
+public class Job extends Statistics {
     private static int lastId = 0;
     private int duration;
     private int remaining;
@@ -91,6 +91,14 @@ public class Job implements Statistics {
     public double getTotalCPUUsage() {
         double done = duration - remaining;
         return done / (waitingTime + done) * 100;
+    }
+
+    @Override
+    public void reset() {
+        remaining = duration;
+        waitingTime = 0;
+        periodWaiting = 0;
+        periodRunning = 0;
     }
 
     /**

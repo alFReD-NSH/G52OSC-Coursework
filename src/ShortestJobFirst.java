@@ -13,4 +13,9 @@ public class ShortestJobFirst extends Algorithm {
             jobManager.runJob(job, Integer.MAX_VALUE);
         }
     }
+
+    @Override
+    public String getName() {
+        return "shortest-job-first";
+    }
 }
